@@ -1,0 +1,72 @@
+<%
+  // Expects: formAction, method ('POST' or 'PUT'), post (object, may be {}), categories, errors
+  var p = typeof post !== 'undefined' ? post : {};
+  var isEdit = method === 'PUT';
+%>
+<% if (errors) { %>
+<div class="alert alert--error">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+  <%= errors %>
+</div>
+<% } %>
+
+<form action="<%= formAction %>" method="POST" enctype="multipart/form-data">
+  <% if (isEdit) { %><input type="hidden" name="_method" value="PUT"><% } %>
+
+  <div class="form-row">
+    <div class="form-group">
+      <label class="form-label" for="title">Title *</label>
+      <input
+        type="text" id="title" name="title" class="form-control"
+        placeholder="e.g. 10 Tips for Better Sleep"
+        value="<%= p.title || '' %>"
+        data-slug-source="#slug"
+        required
+      >
+    </div>
+
+    <div class="form-group">
+      <label class="form-label" for="slug">Slug</label>
+      <input type="text" id="slug" name="slug" class="form-control" placeholder="auto-generated-from-title" value="<%= p.slug || '' %>">
+      <div class="form-hint">Leave blank to auto-generate from the title.</div>
+    </div>
+  </div>
+
+  <div class="form-row">
+    <div class="form-group">
+      <label class="form-label" for="category_id">Category</label>
+      <select id="category_id" name="category_id" class="form-control">
+        <option value="">Uncategorized</option>
+        <% categories.forEach(function (cat) { %>
+          <option value="<%= cat.id %>" <%= (p.category_id === cat.id) ? 'selected' : '' %>><%= cat.name %></option>
+        <% }) %>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Status</label>
+      <div class="status-toggle">
+        <input type="radio" id="status-draft" name="status" value="draft" <%= (!p.status || p.status === 'draft') ? 'checked' : '' %>>
+        <label for="status-draft">Draft</label>
+
+        <input type="radio" id="status-published" name="status" value="published" <%= p.status === 'published' ? 'checked' : '' %>>
+        <label for="status-published">Published</label>
+      </div>
+    </div>
+  </div>
+
+<div class="form-group">
+    <label class="form-label" for="content">Content</label>
+
+<textarea
+    id="content"
+    name="content"><%- p.content || '' %></textarea>
+</div>
+
+
+
+  <div class="form-actions">
+    <button type="submit" class="btn btn-primary"><%= isEdit ? 'Update Post' : 'Create Post' %></button>
+    <a href="/posts" class="btn btn-outline">Cancel</a>
+  </div>
+</form>

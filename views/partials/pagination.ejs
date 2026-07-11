@@ -1,0 +1,25 @@
+<%
+  // Expects `pagination` = { page, totalPages, total, perPage } and `baseUrl` + `queryParams`
+  var qp = typeof queryParams !== 'undefined' ? queryParams : {};
+  function buildUrl(p) {
+    var params = new URLSearchParams(qp);
+    params.set('page', p);
+    return baseUrl + '?' + params.toString();
+  }
+  var startItem = pagination.total === 0 ? 0 : (pagination.page - 1) * pagination.perPage + 1;
+  var endItem = Math.min(pagination.page * pagination.perPage, pagination.total);
+%>
+<% if (pagination.totalPages > 1) { %>
+<div class="pagination">
+  <div class="pagination__info">
+    Showing <strong><%= startItem %>-<%= endItem %></strong> of <strong><%= pagination.total %></strong>
+  </div>
+  <div class="pagination__links">
+    <a class="pagination__link <%= pagination.page <= 1 ? 'is-disabled' : '' %>" href="<%= buildUrl(pagination.page - 1) %>">&laquo;</a>
+    <% for (var i = 1; i <= pagination.totalPages; i++) { %>
+      <a class="pagination__link <%= i === pagination.page ? 'is-active' : '' %>" href="<%= buildUrl(i) %>"><%= i %></a>
+    <% } %>
+    <a class="pagination__link <%= pagination.page >= pagination.totalPages ? 'is-disabled' : '' %>" href="<%= buildUrl(pagination.page + 1) %>">&raquo;</a>
+  </div>
+</div>
+<% } %>

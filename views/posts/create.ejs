@@ -1,0 +1,78 @@
+<div class="page-header">
+  <div>
+    <h1 class="page-header__title">Add Post</h1>
+    <p class="page-header__subtitle">Create a new blog post</p>
+  </div>
+  <a href="/posts" class="btn btn-outline">&larr; Back to Posts</a>
+</div>
+
+  <div class="card">
+    <%- include('_form', {
+      formAction: '/posts',
+      method: 'POST',
+      post: old,
+      categories: categories,
+      errors: errors
+    }) %>
+  </div>
+
+  
+<% defineScripts = `
+<script src="/tinymce/tinymce.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+tinymce.init({
+    selector: '#content',
+    height: 600,
+
+    license_key: 'gpl',
+
+    relative_urls: false,
+    remove_script_host: true,
+    convert_urls: false,
+
+    menubar: true,
+
+    plugins: [
+        'advlist',
+        'autolink',
+        'lists',
+        'link',
+        'image',
+        'media',
+        'table',
+        'code',
+        'fullscreen',
+        'preview',
+        'searchreplace',
+        'wordcount'
+    ],
+
+    toolbar:
+        'undo redo | blocks | ' +
+        'bold italic underline | ' +
+        'alignleft aligncenter alignright | ' +
+        'bullist numlist | ' +
+        'link image media table | ' +
+        'code fullscreen preview',
+
+    images_upload_handler: async (blobInfo) => {
+
+        const formData = new FormData();
+        formData.append('image', blobInfo.blob(), blobInfo.filename());
+
+        const response = await fetch('/posts/upload-image', {
+            method: 'POST',
+            body: formData
+        });
+
+        const json = await response.json();
+
+        console.log(json);   // kiểm tra
+
+        return json.location;
+    }
+});
+});
+</script>
+` %>

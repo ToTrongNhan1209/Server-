@@ -1,0 +1,61 @@
+<div class="page-header">
+  <div>
+    <h1 class="page-header__title">Categories</h1>
+    <p class="page-header__subtitle"><%= categories.length %> categor<%= categories.length === 1 ? 'y' : 'ies' %></p>
+  </div>
+  <a href="/categories/create" class="btn btn-primary">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+    New Category
+  </a>
+</div>
+
+<div class="card">
+  <form class="toolbar" method="GET" action="/categories">
+    <div class="toolbar__search">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" name="q" value="<%= search %>" placeholder="Search categories..." data-live-search />
+    </div>
+    <% if (search) { %>
+      <a href="/categories" class="btn btn-ghost btn-sm">Clear</a>
+    <% } %>
+  </form>
+
+  <% if (categories && categories.length) { %>
+  <div class="table-wrap">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Slug</th>
+          <th>Description</th>
+          <th style="text-align:right;">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% categories.forEach(function (cat) { %>
+        <tr>
+          <td><strong><%= cat.name %></strong></td>
+          <td class="text-muted">/<%= cat.slug %></td>
+          <td class="text-muted"><%= cat.description || '—' %></td>
+          <td>
+            <div class="row-actions">
+              <a href="/categories/<%= cat.id %>/edit" class="btn btn-outline btn-sm">Edit</a>
+              <form action="/categories/<%= cat.id %>?_method=DELETE" method="POST" data-confirm="Delete category “<%= cat.name %>”? Posts in this category will become uncategorized.">
+                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+              </form>
+            </div>
+          </td>
+        </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+  <% } else { %>
+  <div class="empty-state">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m20.59 13.41-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><circle cx="7" cy="7" r="1"/></svg>
+    <h3>No categories found</h3>
+    <p><%= search ? 'Try a different search term.' : 'Create your first category to organize your posts.' %></p>
+    <a href="/categories/create" class="btn btn-primary">Create Category</a>
+  </div>
+  <% } %>
+</div>

@@ -1,0 +1,27 @@
+<div class="page-header">
+    <div>
+        <h1 class="page-header__title"><%= post.title %></h1>
+        <p class="page-header__subtitle">
+            <%= post.categories ? post.categories.name : 'Uncategorized' %>
+        </p>
+    </div>
+
+    <a href="/posts" class="btn btn-outline">
+        ← Back
+    </a>
+</div>
+
+<div class="card">
+
+    <% if(post.featured_image){ %>
+        <img
+            src="<%= post.featured_image %>"
+            style="width:100%;border-radius:10px;margin-bottom:20px;"
+        >
+    <% } %>
+
+    <div class="blog-content">
+        <%- post.content %>
+    </div>
+
+</div>

@@ -1,0 +1,17 @@
+<div class="page-header">
+  <div>
+    <h1 class="page-header__title">Edit Post</h1>
+    <p class="page-header__subtitle">Update “<%= post.title %>”</p>
+  </div>
+  <a href="/posts" class="btn btn-outline">&larr; Back to Posts</a>
+</div>
+
+<div class="card">
+  <%- include('_form', {
+    formAction: '/posts/' + post.id,
+    method: 'PUT',
+    post: post,
+    categories: categories,
+    errors: errors
+  }) %>
+</div>

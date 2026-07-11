@@ -1,0 +1,16 @@
+<div class="page-header">
+  <div>
+    <h1 class="page-header__title">Edit Category</h1>
+    <p class="page-header__subtitle">Update “<%= category.name %>”</p>
+  </div>
+  <a href="/categories" class="btn btn-outline">&larr; Back to Categories</a>
+</div>
+
+<div class="card" style="max-width: 640px;">
+  <%- include('_form', {
+    formAction: '/categories/' + category.id,
+    method: 'PUT',
+    category: category,
+    errors: errors
+  }) %>
+</div>

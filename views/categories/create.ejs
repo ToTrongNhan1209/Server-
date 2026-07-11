@@ -1,0 +1,16 @@
+<div class="page-header">
+  <div>
+    <h1 class="page-header__title">Add Category</h1>
+    <p class="page-header__subtitle">Create a new blog category</p>
+  </div>
+  <a href="/categories" class="btn btn-outline">&larr; Back to Categories</a>
+</div>
+
+<div class="card" style="max-width: 640px;">
+  <%- include('_form', {
+    formAction: '/categories',
+    method: 'POST',
+    category: old,
+    errors: errors
+  }) %>
+</div>

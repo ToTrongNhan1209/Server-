@@ -1,0 +1,43 @@
+<%
+  var c = typeof category !== 'undefined' ? category : {};
+  var isEdit = method === 'PUT';
+%>
+<% if (errors) { %>
+<div class="alert alert--error">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+  <%= errors %>
+</div>
+<% } %>
+
+<form action="<%= formAction %>" method="POST">
+  <% if (isEdit) { %><input type="hidden" name="_method" value="PUT"><% } %>
+
+  <div class="form-row">
+    <div class="form-group">
+      <label class="form-label" for="name">Name *</label>
+      <input
+        type="text" id="name" name="name" class="form-control"
+        placeholder="e.g. Technology"
+        value="<%= c.name || '' %>"
+        data-slug-source="#slug"
+        required
+      >
+    </div>
+
+    <div class="form-group">
+      <label class="form-label" for="slug">Slug</label>
+      <input type="text" id="slug" name="slug" class="form-control" placeholder="auto-generated-from-name" value="<%= c.slug || '' %>">
+      <div class="form-hint">Leave blank to auto-generate from the name.</div>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label class="form-label" for="description">Description</label>
+    <textarea id="description" name="description" class="form-control" style="min-height:120px;" placeholder="Short description of this category..."><%= c.description || '' %></textarea>
+  </div>
+
+  <div class="form-actions">
+    <button type="submit" class="btn btn-primary"><%= isEdit ? 'Update Category' : 'Create Category' %></button>
+    <a href="/categories" class="btn btn-outline">Cancel</a>
+  </div>
+</form>

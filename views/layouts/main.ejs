@@ -1,0 +1,39 @@
+  <!DOCTYPE html>
+  <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= title %> · Blog CMS Admin</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/main.css" />
+    <script>
+      // Apply saved theme before first paint to avoid a flash of the wrong theme.
+      (function () {
+        try {
+          var saved = localStorage.getItem('blogcms-theme');
+          if (saved) document.documentElement.setAttribute('data-theme', saved);
+        } catch (e) {}
+      })();
+    </script>
+  </head>
+  <body>
+    <div class="app">
+      <div class="sidebar-overlay" data-toggle="overlay"></div>
+      <%- include('../partials/sidebar') %>
+
+      <div class="main">
+        <%- include('../partials/header') %>
+
+        <main class="content">
+          <%- body %>
+        </main>
+
+        <%- include('../partials/footer') %>
+      </div>
+    </div>
+
+    <script src="/js/main.js"></script>
+    <%- typeof defineScripts !== 'undefined' ? defineScripts : '' %>
+  </body>
+  </html>
