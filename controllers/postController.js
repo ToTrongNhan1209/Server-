@@ -6,7 +6,7 @@ const path = require('path');
 const slugify = require('slugify');
 const Post = require('../models/Post');
 const Category = require('../models/Category');
-
+const supabase = require("../config/supabase");
 const PER_PAGE = 8;
 
 /** GET /posts - list, search, paginate */
@@ -68,11 +68,31 @@ exports.store = async (req, res, next) => {
 
    let featuredImage = image_url ? image_url.trim() : null;
 
-// Upload từ ô Featured Image
 if (req.file) {
-    featuredImage = "/uploads/" + req.file.filename;
-}
 
+    const ext = req.file.originalname.split(".").pop();
+
+    const fileName =
+        Date.now() +
+        "-" +
+        Math.random().toString(36).substring(2) +
+        "." +
+        ext;
+
+    const { error } = await supabase.storage
+        .from("images")
+        .upload(fileName, req.file.buffer, {
+            contentType: req.file.mimetype
+        });
+
+    if (error) throw error;
+
+    const { data } = supabase.storage
+        .from("images")
+        .getPublicUrl(fileName);
+
+    featuredImage = data.publicUrl;
+}
 // Nếu không có Featured Image thì lấy ảnh đầu tiên trong TinyMCE
 if (!featuredImage && content) {
     const match = content.match(/<img[^>]+src="([^"]+)"/);
@@ -146,7 +166,29 @@ if (image_url && image_url.trim()) {
 }
 
 if (req.file) {
-    featuredImage = "/uploads/" + req.file.filename;
+
+    const ext = req.file.originalname.split(".").pop();
+
+    const fileName =
+        Date.now() +
+        "-" +
+        Math.random().toString(36).substring(2) +
+        "." +
+        ext;
+
+    const { error } = await supabase.storage
+        .from("images")
+        .upload(fileName, req.file.buffer, {
+            contentType: req.file.mimetype
+        });
+
+    if (error) throw error;
+
+    const { data } = supabase.storage
+        .from("images")
+        .getPublicUrl(fileName);
+
+    featuredImage = data.publicUrl;
 }
 
 // Nếu vẫn chưa có ảnh đại diện thì lấy ảnh đầu tiên trong TinyMCE
@@ -178,30 +220,70 @@ exports.destroy = async (req, res, next) => {
   try {
     const post = await Post.getById(req.params.id);
 
-    // Remove locally-stored image file, if any
-    if (post && post.featured_image && post.featured_image.startsWith('/uploads/')) {
-      const filePath = path.join(__dirname, '..', 'public', post.featured_image);
-      fs.existsSync(filePath) && fs.unlink(filePath, () => {});
+    if (post?.featured_image) {
+
+      // Lấy tên file từ URL
+      const fileName = post.featured_image.split("/").pop();
+
+      await supabase.storage
+        .from("images")
+        .remove([fileName]);
     }
 
     await Post.delete(req.params.id);
-    res.redirect('/posts');
+
+    res.redirect("/posts");
+
   } catch (err) {
     next(err);
   }
 };
 
-exports.uploadImage = async (req,res)=>{
+exports.uploadImage = async (req, res) => {
 
-    if(!req.file){
-        return res.status(400).json({
-            error:"No image"
+    try {
+
+        if (!req.file) {
+            return res.status(400).json({
+                error: "No image uploaded"
+            });
+        }
+
+        const ext = req.file.originalname.split(".").pop();
+
+        const fileName =
+            Date.now() +
+            "-" +
+            Math.random().toString(36).substring(2) +
+            "." +
+            ext;
+
+        const { error } = await supabase.storage
+            .from("images")
+            .upload(fileName, req.file.buffer, {
+                contentType: req.file.mimetype,
+                upsert: false
+            });
+
+        if (error) throw error;
+
+        const { data } = supabase.storage
+            .from("images")
+            .getPublicUrl(fileName);
+
+        res.json({
+            location: data.publicUrl
         });
-    }
 
-    res.json({
-        location:"/uploads/"+req.file.filename
-    });
+    } catch (err) {
+
+        console.log(err);
+
+        res.status(500).json({
+            error: err.message
+        });
+
+    }
 
 };
 exports.show = async (req, res, next) => {
