@@ -1,7 +1,6 @@
 <%
-  // Expects: formAction, method ('POST' or 'PUT'), post (object, may be {}), categories, errors
-  var p = typeof post !== 'undefined' ? post : {};
-  var isEdit = method === 'PUT';
+const p = post || {};
+const isEdit = !!p.id;
 %>
 <% if (errors) { %>
 <div class="alert alert--error">

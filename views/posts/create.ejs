@@ -7,13 +7,12 @@
 </div>
 
   <div class="card">
-    <%- include('_form', {
-      formAction: '/posts',
-      method: 'POST',
-      post: old,
-      categories: categories,
-      errors: errors
-    }) %>
+<%- include('_form', {
+    formAction: '/posts',
+    post: {},
+    categories,
+    errors
+}) %>
   </div>
 
   

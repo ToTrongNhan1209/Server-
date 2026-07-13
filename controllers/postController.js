@@ -150,6 +150,7 @@ exports.update = async (req, res, next) => {
         categories,
         errors: 'Post title is required.'
       });
+
     }
 
     const finalSlug = slug && slug.trim() ? slugify(slug, { lower: true, strict: true }) : slugify(title, { lower: true, strict: true });
@@ -210,6 +211,8 @@ if (!featuredImage && content) {
     });
 
     res.redirect('/posts');
+    console.log("Body:", req.body);
+console.log("Status:", status);
   } catch (err) {
     next(err);
   }
